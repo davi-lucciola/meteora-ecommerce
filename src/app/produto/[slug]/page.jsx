@@ -14,7 +14,6 @@ async function fetchProdutoPorSlug(slug) {
   return produto;
 }
 
-
 export default async function ProdutoPage({ params }) {
   const produto = await fetchProdutoPorSlug(params.slug);
 
@@ -23,4 +22,20 @@ export default async function ProdutoPage({ params }) {
       <Produto produto={produto} />
     </main>
   );
+}
+
+// This function cast dynamics endpoints to Static Pages
+// Returning an array with the params which must be Static
+export async function generateStaticParams() {
+ const response = await fetch("https://api.npoint.io/8aa9f543b4ff36ab6e9f/produtos");
+
+  if (!response.ok) {
+    throw new Error("Houve um error ao detalhar produto.");
+  }
+
+  const produtos = await response.json();
+
+  return produtos.map(produto => ({
+    slug: produto.id.toString()
+  }));
 }
